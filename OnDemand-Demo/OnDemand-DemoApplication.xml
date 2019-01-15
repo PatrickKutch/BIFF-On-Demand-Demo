@@ -27,7 +27,7 @@
 		<Network Port="5200">
 		</Network>
 		
-		<Title>On Demand Demo</Title>
+		<Title>On Demand Demo v19.01.15</Title>
 		<Padding top="2" bottom="2" right="2" left="5"/>
 		<StyleSheet>Widget/Modena-BIFF.css</StyleSheet>
 		<Heartbeat Rate="10"/>
@@ -71,7 +71,7 @@
 
 
 	<!-- Tab Definitions -->	
-	<Tab ID="Tab.Dashboard" hgap="5" vgap="5" Align="SW" File="$(AppDir)\Tab.Dashboard.xml"/>
+	<Tab ID="Tab.Dashboard" hgap="15" vgap="15" Align="Center" File="$(AppDir)\Tab.Dashboard.xml"/>
 	<Tab ID="Tab.OnDemand-Example" hgap="5" vgap="5" Align="N" File="$(AppDir)\Tab.OnDemand-Example.xml"/>
 	<Tab ID="Tab.ShowAll" hgap="5" vgap="5" Align="N" File="$(AppDir)\Tab.ShowAll.xml" />
 

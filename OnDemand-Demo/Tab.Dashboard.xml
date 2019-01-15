@@ -27,14 +27,18 @@
 
 	<Tab>
 		<Title>Dashboard</Title>
-		<Grid row="1" column="1" >
-			 			<StyleOverride>
+			<StyleOverride>
 				<Item>
                     -fx-effect: dropshadow(two-pass-box , -fx-outer-border, 10, 0.0 , 4, 5);
 				</Item>
 			</StyleOverride>
- 
-			<Grid row="$(NextRowAlias)" Column="$(CurrentColumnAlias)">
+			<Grid row="$(CurrentRowAlias)" Column="$(NextColumnAlias)">
+				<Widget File="Image\ImageScale.xml" row="0" column="0" Width="80%">
+					<Source>$(AppDir)\Media\Intro.png</Source>
+				</Widget>
+			</Grid>
+
+			<Grid row="$(CurrentRowAlias)" Column="$(PrevColumnAlias)" Align="Center" vgap="10">
 				<!-- Make this Grid OnDemand, AND create some aliases of the namespace/ID  -->
 				<OnDemand SortBy="Namespace" TriggeredIdToken="."> 
 					<Growth Primary="HZ" NewLineCount="1"/>
@@ -42,6 +46,7 @@
 					<NamespaceTriggerPattern>*</NamespaceTriggerPattern> 
 				</OnDemand>
 				<Widget File="Button\Button.xml" row="$(CurrentRowAlias)" column="$(CurrentColumnAlias)" Width="$(BtnWidth)" Height="60" Task="JumpToSystem.$(TriggeredIndex)">
+					<StyleOverride ID="record-sales"/>
 					<Title>$(TriggeredNamespace)</Title>
 				</Widget>
 
@@ -52,8 +57,8 @@
 					</TaskItem>
 				</TaskList>
 			</Grid>            
-            
-			<Grid row="$(NextRowAlias)" Column="$(NextColumnAlias)">
+
+			<Grid row="$(NextRowAlias)" Column="$(NextColumnAlias)" hgap="10">
 				<!-- Make this Grid OnDemand, AND create some aliases of the namespace/ID  -->
 				<OnDemand SortBy="Namespace" TriggeredIdToken="."> 
 					<Growth Primary="HZ" NewLineCount="5"/>
@@ -61,11 +66,12 @@
 					<NamespaceTriggerPattern>*</NamespaceTriggerPattern> add OrderBy=True
 				</OnDemand>
 				<Widget File="Button\Button.xml" row="$(CurrentRowAlias)" column="$(CurrentColumnAlias)" Width="200" Height="60" Task="JumpToSystem.$(TriggeredIndex)">
+					<StyleOverride ID="glass-grey"/>
 					<Title>$(TriggeredNamespace)</Title>
 				</Widget>
 
 
 			</Grid>            
-		</Grid>
+
 	</Tab>
 </MarvinExternalFile>
