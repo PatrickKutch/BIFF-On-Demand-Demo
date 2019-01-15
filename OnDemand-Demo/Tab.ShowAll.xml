@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+##############################################################################
+#  Copyright (c) 2019 Intel Corporation
+# 
+# Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+# 
+#      http://www.apache.org/licenses/LICENSE-2.0
+# 
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+##############################################################################
+#    File Abstract: 
+#    Definition of a Tab this is created for ecah namespace.  It then has  
+#    an OnDemand grid for all datapoints in that namespace  
+##############################################################################
+-->
+<MarvinExternalFile>
+	<AliasList>
+		<DefaultAlias TITLE_STYLE="Description" ITEM_STYLE="Subtitle"/>
+	</AliasList>
+
+	<Tab>
+		<!-- Set title to be the App provided Triggered Namespace, which for this demo
+             are the system names -->
+		<Title>$(TriggeredNamespace) - All Datapoints</Title>
+
+		<Grid row="$(CurrentRowAlias)" column="$(CurrentColumnAlias)" hgap="10" vgap="10">
+			<OnDemand> <!-- NOTE,no sorting here, but you could add it -->
+				<!-- There will be a TON of datapoints, so let's stack them on lines them -->
+				<Growth Primary="Horizontal" Secondary="Vertical" NewLineCount="7"/>
+				<!-- use this namespace -->
+				<NamespaceTriggerPattern>$(TriggeredNamespace)</NamespaceTriggerPattern>
+				<!-- ALL Datapoints for this namespace  -->
+				<IDTriggerPattern>*</IDTriggerPattern>
+				<!-- Let's exclude all IDs with 'list' in them -->
+				<IDTriggerExcludePattern>*list*</IDTriggerExcludePattern>
+				<!-- break up the screen a bit -->
+				<StyleOverride-Even>
+					<Item> -fx-background-color:BLUE</Item>
+				</StyleOverride-Even>   
+				<StyleOverride-Odd>
+					<Item> -fx-background-color:silver </Item>
+				</StyleOverride-Odd>   
+			</OnDemand>
+			
+			<Grid File="$(AppDir)\Grid.Item.xml" row="$(CurrentRowAlias)" column="$(NextColumnAlias)" NS="$(TriggeredNamespace)" TITLE="$(TriggeredID)" ID="$(TriggeredID)"/>
+		</Grid>
+	</Tab>
+</MarvinExternalFile>

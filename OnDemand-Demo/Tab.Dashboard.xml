@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+##############################################################################
+#  Copyright (c) 2016 Intel Corporation
+# 
+# Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+# 
+#      http://www.apache.org/licenses/LICENSE-2.0
+# 
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+##############################################################################
+#    File Abstract: 
+#    Simple Tab Template
+#
+##############################################################################
+-->
+<MarvinExternalFile>
+	<AliasList>
+		<Alias BtnWidth="200"/>
+	</AliasList>
+
+	<Tab>
+		<Title>Dashboard</Title>
+		<Grid row="1" column="1" >
+			 			<StyleOverride>
+				<Item>
+                    -fx-effect: dropshadow(two-pass-box , -fx-outer-border, 10, 0.0 , 4, 5);
+				</Item>
+			</StyleOverride>
+ 
+			<Grid row="$(NextRowAlias)" Column="$(CurrentColumnAlias)">
+				<!-- Make this Grid OnDemand, AND create some aliases of the namespace/ID  -->
+				<OnDemand SortBy="Namespace" TriggeredIdToken="."> 
+					<Growth Primary="HZ" NewLineCount="1"/>
+					<!-- Grow Horizontally, for this, only 1 per line -->
+					<NamespaceTriggerPattern>*</NamespaceTriggerPattern> 
+				</OnDemand>
+				<Widget File="Button\Button.xml" row="$(CurrentRowAlias)" column="$(CurrentColumnAlias)" Width="$(BtnWidth)" Height="60" Task="JumpToSystem.$(TriggeredIndex)">
+					<Title>$(TriggeredNamespace)</Title>
+				</Widget>
+
+
+				<TaskList ID="JumpToSystem.$(TriggeredIndex)">
+					<TaskItem Type="MarvinAdmin">
+						<Task ID="SetActiveTab" Data="Tab.OnDemand-Example.$(TriggeredIndex)"/>
+					</TaskItem>
+				</TaskList>
+			</Grid>            
+            
+			<Grid row="$(NextRowAlias)" Column="$(NextColumnAlias)">
+				<!-- Make this Grid OnDemand, AND create some aliases of the namespace/ID  -->
+				<OnDemand SortBy="Namespace" TriggeredIdToken="."> 
+					<Growth Primary="HZ" NewLineCount="5"/>
+					<!-- Grow Horizontally, for this, only 1 per line -->
+					<NamespaceTriggerPattern>*</NamespaceTriggerPattern> add OrderBy=True
+				</OnDemand>
+				<Widget File="Button\Button.xml" row="$(CurrentRowAlias)" column="$(CurrentColumnAlias)" Width="200" Height="60" Task="JumpToSystem.$(TriggeredIndex)">
+					<Title>$(TriggeredNamespace)</Title>
+				</Widget>
+
+
+			</Grid>            
+		</Grid>
+	</Tab>
+</MarvinExternalFile>

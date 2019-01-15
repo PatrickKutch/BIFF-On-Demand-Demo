@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Marvin>
+<!--
+##############################################################################
+#  Copyright (c) 2019 Intel Corporation
+# 
+# Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+# 
+#      http://www.apache.org/licenses/LICENSE-2.0
+# 
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+##############################################################################
+#    File Abstract: 
+#    Demo showing how to create Tabs and Grids OnDemand
+#    Also uses some percent for widths and heights
+##############################################################################
+-->
+	<Application Scale="auto" mode="debugg" EnableScrollBars="True">
+		<CreationSize Width="1920" Height="1050"/> 
+		<Network Port="5200">
+		</Network>
+		
+		<Title>On Demand Demo</Title>
+		<Padding top="2" bottom="2" right="2" left="5"/>
+		<StyleSheet>Widget/Modena-BIFF.css</StyleSheet>
+		<Heartbeat Rate="10"/>
+	
+		<Tasks Enabled="True"/>
+		<!-- True or False Global enable or disable for ALL tasks, default is true -->
+		<MainMenu Show="True">
+			<!-- True or False Global show or hide menu but Tasks on Widgets still work if Global Tasks are enabled -->
+		</MainMenu>
+
+		<Tabs>
+			<!-- Traditionally Defined Tab -->
+			<Tab ID="Tab.Dashboard" />
+            <!-- This one is OnDemand, when the specified triggers have been fired -->
+			<Tab ID="Tab.OnDemand-Example">
+                <!-- Use optional SortBy to order the OnDemand tabs created -->
+				<OnDemand SortBy="Namespace">
+					<NamespaceTriggerPattern>*</NamespaceTriggerPattern>
+                    <!-- For Tabs that are created via this Criteria, if it is Even numbered, apply the following style info -->
+                    <StyleOverride-Even ID="gradient-blue" File="$(AppDir)\TabEven.css"/>
+                    <!-- For Tabs that are created via this Criteria, if it is Odd numbered, apply the following style info -->
+                    <StyleOverride-Odd>
+                        <Item>-fx-background-color:white</Item>
+                        <Item>-fx-cursor:hand</Item>
+                    </StyleOverride-Odd>
+				</OnDemand>
+			</Tab>
+				 
+			<!-- Another OnDemand Tab, one for each Namespace will be created, and on each tab all datapoints for that
+			     namespace will be created.  Note no sorting, so these will appear in order new namespace received -->
+			<!-- Uncomment the following for another demo WARNING it will result in nearly 10,000 Widgets, may be a little slow for a bit-->
+			<!--
+			<Tab ID="Tab.ShowAll">
+				<OnDemand>
+					<NamespaceTriggerPattern>*</NamespaceTriggerPattern>
+				</OnDemand>
+			</Tab>
+			-->
+		</Tabs>
+	</Application>
+
+
+	<!-- Tab Definitions -->	
+	<Tab ID="Tab.Dashboard" hgap="5" vgap="5" Align="SW" File="$(AppDir)\Tab.Dashboard.xml"/>
+	<Tab ID="Tab.OnDemand-Example" hgap="5" vgap="5" Align="N" File="$(AppDir)\Tab.OnDemand-Example.xml"/>
+	<Tab ID="Tab.ShowAll" hgap="5" vgap="5" Align="N" File="$(AppDir)\Tab.ShowAll.xml" />
+
+	<!-- Global Alias List -->	
+	<AliasList>
+		<Alias AppDir = "OnDemand-Demo"/>
+	</AliasList>
+
+
+</Marvin>

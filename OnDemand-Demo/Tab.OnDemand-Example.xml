@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+##############################################################################
+#  Copyright (c) 2019 Intel Corporation
+# 
+# Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+# 
+#      http://www.apache.org/licenses/LICENSE-2.0
+# 
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+##############################################################################
+#    File Abstract: 
+#    Definition of a Tab this is created when a specific criterea is met.  In 
+#    this case, on every New Namespace.  
+##############################################################################
+-->
+<MarvinExternalFile>
+	<AliasList>
+        <!-- Shortcut Alias, use the App provided TriggeredNamespace Alias -->
+        <!-- There are a number of aliases creaed: TriggeredNamespace,TriggeredID,TriggeredValue,TriggeredIndex and 
+             TabID, which will be the TabID specified in the <Tabs> section, with a'.' + the TriggeredIndex value.
+             TriggeredIndex is the TabNumber created via the criterea specified -->
+		<Alias NS="$(TriggeredNamespace)"/>
+		<Alias ODD_COLOR="gray" EVEN_COLOR="lightgrey"/>
+	</AliasList>
+	<Tab>
+
+        <GridMacro Name="ShowItem">
+             <AliasList>
+                <DefaultAlias TITLE_STYLE="Description" ITEM_STYLE="Subtitle"/>
+            </AliasList>
+            <Widget File="Text\Text.xml" row="0" column="0">
+                <StyleOverride ID="$(TITLE_STYLE)"/>
+                <InitialValue>$(TITLE)</InitialValue>
+            </Widget>
+            <Widget File="Text\Text.xml" row="1" column="0">
+                <StyleOverride ID="$(ITEM_STYLE)"/>
+                <MinionSrc ID="$(ID)" Namespace="$(NS)"/>
+            </Widget>
+        </GridMacro>
+    
+        <!-- Set title to be the App provided Triggered Namespace, which for this demo
+             are the system names -->
+		<Title>$(TriggeredNamespace)</Title>
+        <!-- Grid for top row of System Info items Limit to 20% of Scren Height, and the whole Width -->
+		<Grid row="$(CurrentRowAlias)" column="$(CurrentColumnAlias)" hgap="10"  Height="20%" Width="100%">
+			<Grid row="$(CurrentRowAlias)" column="$(CurrentColumnAlias)" hgap="10">
+                <!-- Use App provided GRID_COLUMN_ODD and GRID_COLUMN_EVEN aliases to do some alternating for the non On-Demand components 
+                     Note that GRID_COLUMN_ODD,GRID_COLUMN_EVEN,GRID_ROW_ODD,GRID_ROW_ODD can be used for OnDemand grids too, however if you
+                     sort them, then you will get unpredictiable resutls.  Use the -->
+				<AliasList>
+					<IF Value1="$(GRID_COLUMN_ODD)" Compare="IF_EQ" Value2="TRUE">
+						<Then>
+							<Alias BG="$(ODD_COLOR)" />
+						</Then>
+						<Else>
+							<Alias BG="$(EVEN_COLOR)" />
+						</Else>
+					</IF>
+				</AliasList>
+				<StyleOverride>
+					<Item>-fx-background-color:$(BG)</Item>
+				</StyleOverride>
+				<Widget File="Text\Text.xml" row="$(CurrentRowAlias)" column="$(CurrentColumnAlias)" Align="S" ColumnSpan="4">
+					<StyleOverride ID="Title"/>
+					<InitialValue>BIOS</InitialValue>
+				</Widget>
+
+				<Grid Macro="ShowItem" row="$(NextRowAlias)" column="$(CurrentColumnAlias)" TITLE="Release Date" ID="SYSTEM.BIOS.RELEASEDATE" />
+				<Grid Macro="ShowItem" row="$(CurrentRowAlias)" column="$(NextColumnAlias)" TITLE="Vendor" ID="SYSTEM.BIOS.Vendor" />
+				<Grid Macro="ShowItem" row="$(CurrentRowAlias)" column="$(NextColumnAlias)" TITLE="Version" ID="SYSTEM.BIOS.Version" />
+			</Grid>
+
+			<Grid row="$(CurrentRowAlias)" column="$(NextColumnAlias)" Height="100%g">
+				<AliasList>
+					<IF Value1="$(GRID_COLUMN_ODD)" Compare="IF_EQ" Value2="TRUE">
+						<Then>
+							<Alias BG="$(ODD_COLOR)" />
+						</Then>
+						<Else>
+							<Alias BG="$(EVEN_COLOR)" />
+						</Else>
+					</IF>
+				</AliasList>
+				<StyleOverride>
+					<Item>-fx-background-color:$(BG)</Item>
+				</StyleOverride>
+
+				<Widget File="Text\Text.xml" row="$(CurrentRowAlias)" column="$(CurrentColumnAlias)" Align="S" ColumnSpan="3">
+					<StyleOverride ID="Title"/>
+					<InitialValue>CPU</InitialValue>
+				</Widget>
+
+				<Grid row="$(NextRowAlias)" column="$(CurrentColumnAlias)">
+					<Grid Macro="ShowItem" row="$(NextRowAlias)" column="$(CurrentColumnAlias)" TITLE="Model" ID="SYSTEM.cpu_model"/>
+					<Grid Macro="ShowItem" row="$(CurrentRowAlias)" column="$(NextColumnAlias)" TITLE="Cores" ID="SYSTEM.core_count"/>
+					<Grid Macro="ShowItem" row="$(CurrentRowAlias)" column="$(NextColumnAlias)" TITLE="Utilization" ID="SYSTEM.cpu_util"/>
+				</Grid>
+				<Grid row="$(NextRowAlias)" column="$(CurrentColumnAlias)" Width="30%"> <!-- This one has the CPU graph, so let's give it 30% of the screen width -->
+                    <!-- Don't show the CPU bar graph until we know how many cores there are, and then use that value
+                         to setup the MaxEntries value for the chart. Trigger on the Namespace that created this Tab, and the system.core_count
+                         ID, as there will only be one of these per system.  -->
+                         
+					<OnDemand>
+						<NamespaceTriggerPattern>$(NS)</NamespaceTriggerPattern>
+						<IDTriggerPattern>system.core_count</IDTriggerPattern>
+					</OnDemand>
+                     <!-- Define the Wiget to go in the grid when it is triggered to create  Let the chart be the whole width of the grid it is in, and 60% of the height -->
+					<Widget File="Chart\ChartBar.xml" row="1" column="1" Height="60%g" Width="100%g">
+						<Title>CPU Utilization</Title>
+                        <!-- TriggeredValue alias is provided by the app when triggered to create this grid -->
+						<xAxis MaxEntries="$(TriggeredValue)"/>
+						<yAxis Label="% Utilization" MaxValue="100"/>
+						<MinionSrc ID="system.CPU_UTIL_LIST" Namespace="$(NS)"/> 
+						<StyleOverride>
+							<Item>-fx-legend-visible:false;-fx-bar-gap:1;-fx-category-gap:1;</Item>
+						</StyleOverride>
+					</Widget>
+				</Grid>
+			</Grid>
+            
+            <!-- Memory info block -->
+			<Grid row="$(CurrentRowAlias)" column="$(NextColumnAlias)" hgap="10">
+				<AliasList>
+					<IF Value1="$(GRID_COLUMN_ODD)" Compare="IF_EQ" Value2="TRUE">
+						<Then>
+							<Alias BG="$(ODD_COLOR)" />
+						</Then>
+						<Else>
+							<Alias BG="$(EVEN_COLOR)" />
+						</Else>
+					</IF>
+				</AliasList>
+				<StyleOverride>
+					<Item>-fx-background-color:$(BG)</Item>
+				</StyleOverride>
+				<Widget File="Text\Text.xml" row="$(CurrentRowAlias)" column="$(CurrentColumnAlias)" Align="S" ColumnSpan="3">
+					<StyleOverride ID="Title"/>
+					<InitialValue>Memory</InitialValue>
+				</Widget>
+
+				<Grid Macro="ShowItem" row="$(NextRowAlias)" column="$(CurrentColumnAlias)" TITLE="Total" ID="SYSTEM.mem_total"/>
+				<Grid Macro="ShowItem" row="$(CurrentRowAlias)" column="$(NextColumnAlias)" TITLE="Available" ID="SYSTEM.mem_available"/>
+			</Grid>		
+            <!-- 'Other' info block -->
+			<Grid row="$(CurrentRowAlias)" column="$(NextColumnAlias)" hgap="10">
+				<AliasList>
+					<IF Value1="$(GRID_COLUMN_ODD)" Compare="IF_EQ" Value2="TRUE">
+						<Then>
+							<Alias BG="$(ODD_COLOR)" />
+						</Then>
+						<Else>
+							<Alias BG="$(EVEN_COLOR)" />
+						</Else>
+					</IF>
+				</AliasList>
+				<StyleOverride>
+					<Item>-fx-background-color:$(BG)</Item>
+				</StyleOverride>
+                
+				<Widget File="Text\Text.xml" row="$(CurrentRowAlias)" column="$(CurrentColumnAlias)" Align="S" ColumnSpan="3">
+					<StyleOverride ID="Title"/>
+					<InitialValue>Other</InitialValue>
+				</Widget>
+
+				<Grid Macro="ShowItem" row="$(NextRowAlias)" column="$(CurrentColumnAlias)" TITLE="OS" ID="SYSTEM.DISTRO"/>
+				<Grid Macro="ShowItem" row="$(CurrentRowAlias)" column="$(NextColumnAlias)" TITLE="Manufacturer" ID="SYSTEM.manufacturer"/>
+			</Grid>		
+		</Grid>		
+
+		<!-- OnDemand grid for every NIC.  Width,Height,hgap,vgap are for the 'container' grid to se these in the
+			 grid that is dynamically created specify them in the grid definition -->
+		<Grid File="$(AppDir)\Grid.OnDemandNIC.xml" row="$(NextRowAlias)" Column="$(CurrentColumnAlias)" Width="31%" Height="20%">
+			<!-- Make this Grid OnDemand, AND create some aliases of the namespace/ID  -->
+            <!-- Also Tokenize the ID into parts using a '.' as the separator (look inside Grid.OnDemandNIC to see how this is used) --> 
+			<OnDemand SortBy="ID" TriggeredIdToken="."> 
+                <!-- Could be a lot of Nics, so let's put 3 on a line, then move to next line if more -->
+				<Growth Primary="Horizontal" Secondary="Vertical" NewLineCount="3"/>
+				<!-- use this namespace -->
+				<NamespaceTriggerPattern>$(NS)</NamespaceTriggerPattern>
+				<!-- all NICs in my dataset have MTU, so use it for match -->
+				<IDTriggerPattern>netdev.*.rx_bytes</IDTriggerPattern>
+                <!-- Provide some alternating backgrounds, use this when you sort instead of GRID_COLUMN_ODD,GRID_COLUMN_EVEN -->
+                <StyleOverride-Even>
+                    <Item> -fx-background-color:BLUE</Item>
+                 </StyleOverride-Even>   
+                <StyleOverride-Odd>
+                    <Item> -fx-background-color:silver </Item>
+                 </StyleOverride-Odd>   
+			</OnDemand>
+		</Grid>
+	</Tab>
+</MarvinExternalFile>

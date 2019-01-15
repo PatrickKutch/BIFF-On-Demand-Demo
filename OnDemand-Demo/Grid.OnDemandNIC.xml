@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+##############################################################################
+#  Copyright (c) 2019 Intel Corporation
+# 
+# Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+# 
+#      http://www.apache.org/licenses/LICENSE-2.0
+# 
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+##############################################################################
+#    File Abstract: 
+#    Is an OnDemand Grid that displays info on a Network Device.  
+##############################################################################
+-->
+<MarvinExternalFile>
+	<AliasList>
+        <!-- Create A shortcut that is the NIC name.  For each NIC Grid created
+             there will be 3 TriggeredID.n parts.  This is because each one has and ID of
+             'netdev.nicname.datapont', because this is how the collector assigns IDs.  So I
+             tokenize using the '.' and #2 will be the nic name (like eth0, en04, etc.) -->
+		<Alias NIC="$(TriggeredIDPart.2)" />
+	</AliasList>
+
+	<Grid Align="N" hgap="5">
+		<Widget File="Text\Text.xml" row="$(CurrentRowAlias)" column="$(CurrentColumnAlias)" Align="S" ColumnSpan="3">
+			<StyleOverride ID="Title"/>
+			<InitialValue>$(NIC)</InitialValue>
+		</Widget>
+        
+        <!-- Display some info on theNIC -->
+		<Widget File="Text\Text.xml" row="$(NextRowAlias)" column="$(CurrentColumnAlias)" Align="S" ColumnSpan="3">
+			<StyleOverride ID="Description"/>
+			<InitialValue></InitialValue>
+			<MinionSrc ID="netdev.$(NIC).vendor_info" Namespace="$(NS)"/>
+		</Widget>
+
+		<Grid row="$(NextRowAlias)" column="$(CurrentColumnAlias)" hgap="10">
+			<Grid row="$(NextRowAlias)" column="$(CurrentColumnAlias)">
+				<Widget File="Text\Text.xml" row="$(CurrentRowAlias)" column="$(CurrentColumnAlias)" Align="S" >
+					<StyleOverride ID="Title"/>
+					<InitialValue>Device Info</InitialValue>
+				</Widget>
+
+				<Grid row="$(NextRowAlias)" column="$(CurrentColumnAlias)">
+                    <!-- Could not use the Macro I used in other xml file, as Macros currently have scoping problem with OnDemand grids -->
+				<!-- uncomment if you want more info
+					<Grid File="$(AppDir)\Grid.Item.xml" row="$(NextRowAlias)" column="$(CurrentColumnAlias)" TITLE="Driver" ID="netdev.$(NIC).driver"/>
+					<Grid File="$(AppDir)\Grid.Item.xml" row="$(CurrentRowAlias)" column="$(NextColumnAlias)" TITLE="MAC" ID="netdev.$(NIC).macaddress"/>
+					<Grid File="$(AppDir)\Grid.Item.xml" row="$(CurrentRowAlias)" column="$(NextColumnAlias)" TITLE="MTU" ID="netdev.$(NIC).mtu"/>
+					<Grid File="$(AppDir)\Grid.Item.xml" row="$(CurrentRowAlias)" column="$(NextColumnAlias)" TITLE="STATE" ID="netdev.$(NIC).state"/>
+					<Grid File="$(AppDir)\Grid.Item.xml" row="$(CurrentRowAlias)" column="$(NextColumnAlias)" TITLE="Speed" ID="netdev.$(NIC).speed"/>
+				-->
+					<Grid File="$(AppDir)\Grid.Item.xml" row="$(CurrentRowAlias)" column="$(NextColumnAlias)" TITLE="TX Gbps" ID="netdev.$(NIC).tx_gbps"/>
+					<Grid File="$(AppDir)\Grid.Item.xml" row="$(CurrentRowAlias)" column="$(NextColumnAlias)" TITLE="RX Gbps" ID="netdev.$(NIC).rx_gbps"/>
+					<Grid File="$(AppDir)\Grid.Item.xml" row="$(CurrentRowAlias)" column="$(NextColumnAlias)" TITLE="BX Gbps" ID="netdev.$(NIC).bx_gbps"/>
+				</Grid>
+			</Grid>
+			<Grid row="$(CurrentRowAlias)" column="$(NextColumnAlias)">
+				<Widget File="Chart/ChartMultiSrcStackedArea.xml" row="$(CurrentRowAlias)" column="$(CurrentColumnAlias)"  Height="70%g" Width="60%g">
+					<Title>Throughput</Title>
+					<xAxis MaxEntries="30"/>
+					<yAxis Label="Gbps" MaxValue="2"/>
+                    <!-- use the MaxSteppedRange feature to have the Chart automatically adjust the yAxis to fit -->
+                    <!-- This is a stacked chart, so normal NIC speeds of 1,2.5,10,25,40,100 are doubled -->
+					<MaxSteppedRange>2,5,20,50,80,200</MaxSteppedRange>
+					<Series Label="RX">
+						<MinionSrc Namespace="$(NS)" ID="netdev.$(NIC).rx_gbps"/>
+					</Series>
+					<Series Label="TX">
+						<MinionSrc Namespace="$(NS)" ID="netdev.$(NIC).tx_gbps"/>
+					</Series>
+				</Widget>
+			</Grid>
+		</Grid>
+	</Grid>
+
+
+</MarvinExternalFile>	
